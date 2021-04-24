@@ -7,7 +7,13 @@ block_t* create_block(buffer_t buffer)
 	memset(r, 0, sizeof(block_t));
 	return r;
 }
-inline bool save_data(void* addr, data_t data)
+
+void free_block(block_t* block, buffer_t buffer)
+{
+	freeBlockInBuffer(block, buffer);
+}
+
+bool save_data(void* addr, data_t data)
 {
 	char buf[4];
 	if (data > 9999) return false;
@@ -49,13 +55,13 @@ bool save_block(block_t* block, address_t address, buffer_t buffer)
 	if (!save_data(&block->next, (data_t)block->next)) return false;
 	return !writeBlockToDisk((unsigned char*)block, address, buffer);
 }
-inline data_t load_data(void* addr)
+data_t load_data(void* addr)
 {
 	data_t r = 0;
 	char* start = (char*)addr;
 	for (size_t i = 0; i < 4; i++)
 	{
-		if (start[i] == 0) continue;
+		if (start[i] == 0) break;
 		r *= 10;
 		r += start[i] - '0';
 
@@ -76,15 +82,25 @@ block_t* load_block(const address_t address, const buffer_t buffer)
 	return block;
 }
 
-static inline data_t key_of(item_t item, name_t key)
+data_t key_of(item_t item, name_t key)
 {
 	// A(65),C(67)则使用第一项
 	return key & 1 ? item.first : item.second;
 }
 
-address_t sort_block(address_t addr, name_t key, buffer_t buffer)
+data_t key_of_pointer(item_t* item, name_t key)
 {
-	block_t* const block = load_block(addr, buffer);
+	// A(65),C(67)则使用第一项
+	return key & 1 ? item->first : item->second;
+}
+static void swap_items(item_t* a, item_t* b) {
+	if (a == b)return;
+	const item_t t = *a;
+	*a = *b;
+	*b = t;
+}
+void sort_block(block_t* block, name_t key)
+{
 	item_t* const start = block->items;  // NOLINT(clang-diagnostic-incompatible-pointer-types-discards-qualifiers)
 	item_t* end = (item_t*)block->items + 6;  // NOLINT(clang-diagnostic-incompatible-pointer-types-discards-qualifiers, clang-diagnostic-cast-qual)
 	/* Note: in assertions below, i and j are always inside original bound of array to sort. */
@@ -94,12 +110,28 @@ address_t sort_block(address_t addr, name_t key, buffer_t buffer)
 		for (item_t* p = start + 1; p <= end; p++)
 			if (key_of(*p, key) > key_of(*max, key))
 				max = p;
-		item_t const swap_buf = *end;
-		*end = *max;
-		*max = swap_buf;
+		swap_items(max, end);
 		end--;
 	}
 	const address_t next_addr = block->next;
-	save_block(block, addr + URSQL_BLOCK_SORTED_BASE, buffer);
-	return next_addr;
+}
+inline item_t* item_at(size_t index, block_t** blocks)
+{
+	return &blocks[index / 7]->items[index % 7];
+}
+
+
+void sort_blocks(size_t count, name_t key, block_t** blocks)
+{
+	count *= 7;
+	/* Note: in assertions below, i and j are alway inside original bound of array to sort. */
+	while (count > 0)
+	{
+		size_t max = 0;
+		for (size_t p = 1; p <= count; p++)
+			if (key_of_pointer(item_at(p, blocks), key) > key_of_pointer(item_at(max, blocks), key))
+				max = p;
+		swap_items(item_at( max,blocks), item_at(count,blocks));
+		count--;
+	}
 }

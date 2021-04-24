@@ -140,18 +140,24 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="block.c" />
+    <ClCompile Include="data_writer.c" />
+    <ClCompile Include="enumerator.c" />
     <ClCompile Include="extmem.c" />
     <ClCompile Include="infrastructure.c" />
     <ClCompile Include="relation.c" />
     <ClCompile Include="test.c" />
+    <ClCompile Include="ursql_io.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h" />
+    <ClInclude Include="data_writer.h" />
+    <ClInclude Include="enumerator.h" />
     <ClInclude Include="extmem.h" />
     <ClInclude Include="infrastructure.h" />
     <ClInclude Include="relation.h" />
     <ClInclude Include="ursql-consts.h" />
     <ClInclude Include="ursql.h" />
+    <ClInclude Include="ursql_io.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

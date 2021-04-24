@@ -30,3 +30,6 @@ typedef unsigned char byte;
 #define ARRAY(T) array_##T
 
 USE_ARRAY(range_t)
+
+#define LONG_LINE "--------------------------------------------\n"
+

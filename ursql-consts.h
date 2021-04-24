@@ -46,5 +46,6 @@ typedef struct block_t_str
 	address_t next;
 } block_t;
 
-#define URSQL_LINEAR_SEARCH_BASE (address_t)2e2
+#define URSQL_LINEAR_SEARCH_BASE (address_t)1e2
 #define URSQL_BLOCK_SORTED_BASE (address_t)2e2
+#define URSQL_ALL_SORTED_BASE (address_t)3e2

@@ -1,5 +1,7 @@
 #pragma once
 #include "ursql-consts.h"
+#include "block.h"
+#include "ursql_io.h"
 
 typedef struct relation_t_str
 {
@@ -16,6 +18,13 @@ typedef struct relation_t_str
 address_t address_of(name_t relation);
 
 /// <summary>
+/// 获取指定关系的大小
+/// </summary>
+/// <param name="relation">关系名称</param>
+/// <returns>地址</returns>
+size_t length_of(name_t relation);
+
+/// <summary>
 /// 对一个关系的每一个储存块排序
 /// </summary>
 /// <param name="rel">关系信息</param>
@@ -30,3 +39,17 @@ void sort_each_block(name_t rel, name_t key, buffer_t buf);
 /// <param name="value">值</param>
 /// <param name="buf">缓冲区</param>
 void linear_search(name_t rel, name_t key, data_t value, buffer_t buf);
+/// <summary>
+/// 对指定关系TPMMS
+/// </summary>
+/// <param name="rel">关系</param>
+/// <param name="key">键</param>
+/// <param name="buf">缓冲区</param>
+void tpmms(name_t rel, name_t key, buffer_t buf);
+/// <summary>
+/// 对指定关系分块排序
+/// </summary>
+/// <param name="rel">关系</param>
+/// <param name="key">键</param>
+/// <param name="buf">缓冲区</param>
+void block_sort(name_t rel, name_t key, buffer_t buf);

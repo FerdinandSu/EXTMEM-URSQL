@@ -30,6 +30,15 @@
     <ClCompile Include="block.c">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="ursql_io.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="enumerator.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="data_writer.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="extmem.h">
@@ -48,6 +57,15 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="block.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ursql_io.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="enumerator.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="data_writer.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
