@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "extmem.h"
+#include "ursql.h"
 
 int main(int argc, char** argv)
 {
@@ -68,6 +69,45 @@ int main(int argc, char** argv)
 	printf("\n");
 	printf("IO's is %lu\n", buf.numIO); /* Check the number of IO's */
 
+
+	block_t* block;
+		/* Read the block from the hard disk */
+	if ((block = load_block(1, &buf)) == NULL)
+	{
+		perror("Reading Block Failed!\n");
+		return -1;
+	}
+
+	/* Process the data in the block */
+
+	printf("block 1:\n");
+	for (i = 0; i < 7; i++) //一个blk存7个元组加一个地址
+	{
+
+		/*for (int k = 0; k < 4; k++)
+		{
+			str[k] = *(blk + (i << 3) + k);
+		}
+		X = atoi(str);
+		for (int k = 0; k < 4; k++)
+		{
+			str[k] = *(blk + (i << 3) + 4 + k);
+		}
+		Y = atoi(str);*/
+		printf("(%d, %d) ", block->items[i].first, block->items[i].second);
+	}
+	/*for (int k = 0; k < 4; k++)
+	{
+		str[k] = *(blk + (i << 3) + k);
+	}
+	addr = atoi(str);*/
+	printf("\nnext address = %lld \n", block->next);
+
+
+	printf("\n");
+	printf("IO's is %lu\n", buf.numIO); /* Check the number of IO's */
+
+	
 	return 0;
 }
 

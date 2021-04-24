@@ -16,7 +16,7 @@ typedef char name_t;
 /// <summary>
 /// Êý¾Ý
 /// </summary>
-typedef int data_t;
+typedef uint data_t;
 /// <summary>
 /// µØÖ·
 /// </summary>
@@ -46,6 +46,5 @@ typedef struct block_t_str
 	address_t next;
 } block_t;
 
-typedef bool(*sel)(item_t) selector;
-
-#define URSQL_ADDR_BASE (address_t)1e3
+#define URSQL_LINEAR_SEARCH_BASE (address_t)2e2
+#define URSQL_BLOCK_SORTED_BASE (address_t)2e2

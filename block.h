@@ -23,6 +23,13 @@ inline bool save_block(block_t* block, address_t address, buffer_t buffer);
 /// <returns>块指针</returns>
 inline block_t* load_block(address_t address, buffer_t buffer);
 /// <summary>
+/// 获取指定键上的值
+/// </summary>
+/// <param name="item">项目</param>
+/// <param name="key">键</param>
+/// <returns>值</returns>
+static inline data_t key_of(item_t item, name_t key);
+/// <summary>
 /// 对指定地址处的块进行升序排序
 /// </summary>
 /// <param name="addr">块地址</param>

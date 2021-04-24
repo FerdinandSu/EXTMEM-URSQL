@@ -1,4 +1,5 @@
 #include "block.h"
+#include <stdio.h>
 
 block_t* create_block(buffer_t buffer)
 {
@@ -6,15 +7,73 @@ block_t* create_block(buffer_t buffer)
 	memset(r, 0, sizeof(block_t));
 	return r;
 }
+inline bool save_data(void* addr, data_t data)
+{
+	char buf[4];
+	if (data > 9999) return false;
+	char* const exp = (char*)addr;
+	if (data == 0)
+	{
+		exp[0] = '0';
+		exp[1] = 0;
+		exp[2] = 0;
+		exp[3] = 0;
+		return true;
+	}
+	char* const start = buf;
+	char* d = start + 3;
+	for (; d >= start; d--)
+	{
+		*d = (char)('0' + data % 10);
+		data /= 10;
+	}
 
+	for (size_t i = 0, j = 0; i < 4; i++)
+	{
+		while (buf[j] == '0' && j < 4)
+		{
+			j++;
+		}
+		exp[j] = (char)(j >= 4 ? 0 : buf[j]);
+
+	}
+	return true;
+}
 bool save_block(block_t* block, address_t address, buffer_t buffer)
 {
+	for (size_t i = 0; i < 7; i++)
+	{
+		if (!save_data(&block->items[i].first, block->items[i].first))return false;
+		if (!save_data(&block->items[i].second, block->items[i].second))return false;
+	}
+	if (!save_data(&block->next, (data_t)block->next)) return false;
 	return !writeBlockToDisk((unsigned char*)block, address, buffer);
 }
-
-block_t* load_block(address_t address, buffer_t buffer)
+inline data_t load_data(void* addr)
 {
-	return (block_t*)readBlockFromDisk(address, buffer);
+	data_t r = 0;
+	char* start = (char*)addr;
+	for (size_t i = 0; i < 4; i++)
+	{
+		if (start[i] == 0) continue;
+		r *= 10;
+		r += start[i] - '0';
+
+	}
+
+	return r;
+}
+block_t* load_block(const address_t address, const buffer_t buffer)
+{
+	block_t* block = (block_t*)readBlockFromDisk(address, buffer);
+	for (size_t i = 0; i < 7; i++)
+	{
+		block->items[i].first = load_data(&block->items[i].first);
+		block->items[i].second = load_data(&block->items[i].second);
+	}
+	block->next = load_data(&block->next);
+	printf("¶ÁÈëÊý¾Ý¿é%lld\n", address);
+	return block;
 }
 
 static inline data_t key_of(item_t item, name_t key)
@@ -41,6 +100,6 @@ address_t sort_block(address_t addr, name_t key, buffer_t buffer)
 		end--;
 	}
 	const address_t next_addr = block->next;
-	save_block(block, addr, buffer);
+	save_block(block, addr + URSQL_BLOCK_SORTED_BASE, buffer);
 	return next_addr;
 }
