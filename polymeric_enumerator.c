@@ -1,5 +1,7 @@
 #include "polymeric_enumerator.h"
 
+#include "block.h"
+
 static polymeric_enumerator_t check_polymeric_enumerator(polymeric_enumerator_t const this)
 {
 	for (size_t i = 0; i < this->enumerator_count; i++)
@@ -62,4 +64,22 @@ void destroy_polymeric_enumerator(polymeric_enumerator_t this)
 	}
 	this->selected = ~0u;
 	this->enumerator_count = 0;
+}
+
+size_t min_of_enumerators(size_t count, enumerator_t* array, name_t key)
+{
+	if (count == 0)return ~0u;
+	if (count == 1)return 0;
+	data_t min_val = ~0u;
+	size_t min_i = ~0u;
+	for (size_t i = 0; i < count; i++)
+	{
+		const data_t this_key = key_of_pointer(value_of(array[i]), key);
+		if (this_key < min_val)
+		{
+			min_val = this_key;
+			min_i = i;
+		}
+	}
+	return min_i;
 }

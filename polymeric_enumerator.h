@@ -14,7 +14,7 @@
  /// <summary>
  /// 聚合器
  /// </summary>
-typedef size_t (*aggregator_t)(size_t, enumerator_t*, name_t key);
+typedef size_t (*aggregator_t)(size_t, enumerator_t*, name_t);
 
 /// <summary>
 /// 聚合枚举器
@@ -61,3 +61,12 @@ item_t* value_of_polymeric(polymeric_enumerator_t this);
 /// </summary>
 /// <param name="this">当前聚合枚举器</param>
 void destroy_polymeric_enumerator(polymeric_enumerator_t this);
+
+/// <summary>
+/// 聚合器。取各枚举器上的最小值。
+/// </summary>
+/// <param name="count">枚举器个数</param>
+/// <param name="array">枚举器数组</param>
+/// <param name="key">取最小值的键</param>
+/// <returns>取得了最小值的枚举器序号</returns>
+size_t min_of_enumerators(size_t count, enumerator_t* array, name_t key);
