@@ -50,7 +50,7 @@ void move_next(enumerator_t this);
 /// <returns>当前元素</returns>
 item_t* value_of(enumerator_t this);
 /// <summary>
-/// 释放是否有下一个元素
+/// 释放枚举器
 /// </summary>
 /// <param name="this">当前枚举器</param>
 void destroy_enumerator(enumerator_t this);
