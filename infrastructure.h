@@ -16,16 +16,16 @@
 #define CWL_YELLOW       "\033[1;33m"
 #define CWL_LIGHT_GRAY   "\033[0;37m"
 #define CWL_WHITE        "\033[1;37m"
+#include <stddef.h>
 
 
 typedef struct struct_range {
-	int left;
-	int right;
+	size_t left;
+	size_t right;
 } range_t;
 
 typedef unsigned int uint;
 typedef unsigned char byte;
-
 #define USE_ARRAY(T) typedef struct struct_array_##T{uint length; T* items;} array_##T;
 #define ARRAY(T) array_##T
 

@@ -39,6 +39,9 @@
     <ClCompile Include="data_writer.c">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="polymeric_enumerator.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="extmem.h">
@@ -66,6 +69,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="data_writer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="polymeric_enumerator.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

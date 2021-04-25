@@ -2,12 +2,13 @@
 #include <memory.h>
 #include "block.h"
 
-enumerator_t create_enumerator(address_t first_block, buffer_t buffer)
+enumerator_t initialize_enumerator(enumerator_t const this, address_t first_block, buffer_t buffer)
 {
-	enumerator_t const r = (enumerator_t)calloc(1, sizeof(enumerator_origin_t));
-	r->buffer = buffer;
-	r->block = load_block(first_block, buffer);
-	return r;
+	this->buffer = buffer;
+	this->index = 0;
+	this->current_address = first_block;
+	this->block = load_block(first_block, buffer);
+	return this;
 }
 
 bool has_next(enumerator_t this)
@@ -29,6 +30,7 @@ void move_next(enumerator_t this)
 	address_t const next = this->block->next;
 	free_block(this->block, this->buffer);
 	this->block = load_block(next, this->buffer);
+	this->current_address = next;
 	this->index = 0;
 
 }
@@ -41,5 +43,4 @@ item_t* value_of(enumerator_t this)
 void destroy_enumerator(enumerator_t this)
 {
 	free_block(this->block, this->buffer);
-	free(this);
 }

@@ -1,3 +1,11 @@
+/**
+ * block.h
+ * Ferdinand Sukhoi
+ * Harbin Institute of Technology
+ * April 25, 2021
+ *
+ * 用于适配EXTMEM的块操作中间件
+ */
 #pragma once
 #include "ursql-consts.h"
 

@@ -1,4 +1,6 @@
 #include "block.h"
+
+#include <stdint.h>
 #include <stdio.h>
 
 block_t* create_block(buffer_t buffer)
@@ -10,7 +12,7 @@ block_t* create_block(buffer_t buffer)
 
 void free_block(block_t* block, buffer_t buffer)
 {
-	freeBlockInBuffer(block, buffer);
+	freeBlockInBuffer((byte*)block, buffer);
 }
 
 bool save_data(void* addr, data_t data)
@@ -34,7 +36,7 @@ bool save_data(void* addr, data_t data)
 		data /= 10;
 	}
 	size_t j = 0;
-	for (;buf[j] == '0' && j < 4;)
+	for (; buf[j] == '0' && j < 4;)
 	{
 		j++;
 	}
@@ -97,9 +99,12 @@ data_t key_of_pointer(item_t* item, name_t key)
 }
 static void swap_items(item_t* a, item_t* b) {
 	if (a == b)return;
-	const item_t t = *a;
-	*a = *b;
-	*b = t;
+	uint64_t* au = (uint64_t*)a;
+	uint64_t* bu = (uint64_t*)b;
+	if (*au == *bu)return;
+	*au = *au ^ *bu;
+	*bu = *au ^ *bu;
+	*au = *au ^ *bu;
 }
 void sort_block(block_t* block, name_t key)
 {
@@ -135,7 +140,7 @@ void sort_blocks(size_t count, name_t key, block_t** blocks)
 		for (size_t p = 1; p <= count; p++)
 			if (key_of_pointer(item_at(p, blocks), key) > key_of_pointer(item_at(max, blocks), key))
 				max = p;
-		swap_items(item_at( max,blocks), item_at(count,blocks));
+		swap_items(item_at(max, blocks), item_at(count, blocks));
 		count--;
 	}
 }

@@ -144,6 +144,7 @@
     <ClCompile Include="enumerator.c" />
     <ClCompile Include="extmem.c" />
     <ClCompile Include="infrastructure.c" />
+    <ClCompile Include="polymeric_enumerator.c" />
     <ClCompile Include="relation.c" />
     <ClCompile Include="test.c" />
     <ClCompile Include="ursql_io.c" />
@@ -154,6 +155,7 @@
     <ClInclude Include="enumerator.h" />
     <ClInclude Include="extmem.h" />
     <ClInclude Include="infrastructure.h" />
+    <ClInclude Include="polymeric_enumerator.h" />
     <ClInclude Include="relation.h" />
     <ClInclude Include="ursql-consts.h" />
     <ClInclude Include="ursql.h" />
