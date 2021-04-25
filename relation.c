@@ -194,7 +194,7 @@ void inner_join(name_t this_rel, name_t target_rel, property_info_t inner_key, p
 	enumerator_t this_enumerators[7];
 	// 一路写入
 	data_writer_origin_t writer_base;
-	data_writer_t writer = create_data_writer(&writer_base, URSQL_INNER_JOIN_BASE + address_of(this_rel), buf);
+	data_writer_t writer = create_data_writer(&writer_base, URSQL_INNER_JOIN_BASE, buf);
 	//打开输入流
 	size_t this_input_count = 0;
 	size_t block_sum_count = length_of(this_rel);
