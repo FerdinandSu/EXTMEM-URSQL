@@ -6,6 +6,7 @@
 
 #include "data_writer.h"
 #include "enumerator.h"
+#include "polymeric_enumerator.h"
 
 address_t address_of(name_t relation)
 {
@@ -106,6 +107,7 @@ void tpmms(name_t rel, name_t key, buffer_t buf)
 	// (至多)七路读取
 	enumerator_origin_t enumerator_bases[7];
 	enumerator_t enumerators[7];
+
 	// 一路写入
 	data_writer_origin_t writer_base;
 	data_writer_t writer = create_data_writer(&writer_base, URSQL_ALL_SORTED_BASE + base_address, buf);
@@ -120,44 +122,16 @@ void tpmms(name_t rel, name_t key, buffer_t buf)
 		input_count++;
 		base_address += load_size;
 	}
-	// 排序
-	while (input_count)
+	// 聚合枚举器
+	polymeric_enumerator_origin_t reader_base = { enumerators,input_count,min_of_enumerators,key,~0u };
+	polymeric_enumerator_t reader = initialize_polymeric_enumerator(&reader_base);
+	// 使用聚合枚举器排序
+	do
 	{
-		data_t min_val = ~0u;
-		size_t min_i = 7;
-		for (size_t i = 0; i < input_count; i++)
-		{
-			const data_t this_key = key_of_pointer(value_of(enumerators[i]), key);
-			if (this_key < min_val)
-			{
-				min_val = this_key;
-				min_i = i;
-			}
-		}
-		if (min_i == 7)
-		{
-			printf("Sort Failed.");
-			return;
-		}
-		// 最小值写入磁盘
-		append_data(writer, *value_of(enumerators[min_i]));
-		// 更新迭代器
-		if (has_next(enumerators[min_i]))
-		{
-			move_next(enumerators[min_i]);
-		}
-		else
-		{
-			// 从队列移除没有元素的迭代器
-			destroy_enumerator(enumerators[min_i]);
-			if (min_i + 1 != input_count)
-			{
-				enumerators[min_i] = enumerators[input_count - 1];
-			}
-			input_count--;
-
-		}
-	}
+		append_data(writer, *value_of_polymeric(reader));
+		move_next_polymeric(reader);
+	} while (has_next_polymeric(reader));
+	destroy_polymeric_enumerator(reader);
 	comment_wrote_into_blocks(writer->initial_block, writer->current_block);
 	// 关闭流
 	close_data_writer(writer);
@@ -252,11 +226,11 @@ void inner_join(name_t this_rel, name_t target_rel, property_info_t inner_key, p
 	{
 		for (size_t i = 0; i < this_input_count; i++)
 		{
-			if (key_of_pointer(value_of(this_enumerators[i]), inner_key.property_name)
+			/*if (key_of_pointer(value_of(this_enumerators[i]), inner_key.property_name)
 				< outer_key.property_range.left)
 			{
-				if(has_next(this_enumerators[i]))
-			}
+				if (has_next(this_enumerators[i]))
+			}*/
 		}
 	}
 

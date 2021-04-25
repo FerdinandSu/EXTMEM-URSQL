@@ -2,7 +2,7 @@
 
 #include "block.h"
 
-static polymeric_enumerator_t check_polymeric_enumerator(polymeric_enumerator_t const this)
+static void check_polymeric_enumerator(polymeric_enumerator_t const this)
 {
 	for (size_t i = 0; i < this->enumerator_count; i++)
 	{
@@ -17,7 +17,7 @@ static polymeric_enumerator_t check_polymeric_enumerator(polymeric_enumerator_t 
 		}
 	}
 }
-static polymeric_enumerator_t update_selected(polymeric_enumerator_t const this)
+static void update_selected(polymeric_enumerator_t const this)
 {
 	this->selected = this->aggregator(this->enumerator_count, this->enumerators, this->key);
 }
@@ -25,6 +25,7 @@ polymeric_enumerator_t initialize_polymeric_enumerator(polymeric_enumerator_t co
 {
 	check_polymeric_enumerator(this);
 	update_selected(this);
+	return this;
 }
 
 bool has_next_polymeric(polymeric_enumerator_t this)
