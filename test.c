@@ -40,6 +40,11 @@ int main(int argc, char** argv)
 
 	inner_join('R', 'S', r_a, s_c, buffer);
 
+	union_sets('R', 'S', r_a, s_c, buffer);
+
+	intersect_sets('R', 'S', r_a, s_c, buffer);
+	subtract_sets('R', 'S', r_a, s_c, buffer);
+	
 	return 0;
 }
 

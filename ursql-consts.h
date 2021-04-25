@@ -95,3 +95,6 @@ size_t length_of(name_t relation);
 #define URSQL_INNER_JOIN_BASE (address_t)6e2
 #define URSQL_INNER_JOIN_BUFFER_BASE (address_t)7e2
 
+#define URSQL_UNION_BASE (address_t)8e2
+#define URSQL_INTERSECT_BASE (address_t)9e2
+#define URSQL_SUBTRACT_BASE (address_t)1e3

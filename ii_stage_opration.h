@@ -26,12 +26,13 @@ typedef size_t(*alg_stage_ii)(data_writer_t writer, polymeric_enumerator_t this_
 /// <param name="this_main_key">关系1主键</param>
 /// <param name="that_main_key">关系2主键</param>
 /// <param name="stage_ii">阶段二的操作</param>
+/// <param name="ans_base_addr">输出文件基地址</param>
 /// <param name="buf">缓冲区</param>
 /// <returns>操作统计结果</returns>
 size_t ii_stage_operation(
     name_t this_rel, name_t that_rel,
     property_info_t this_main_key, property_info_t that_main_key,
-    alg_stage_ii stage_ii,
+    alg_stage_ii stage_ii, address_t ans_base_addr,
     buffer_t buf);
 /// <summary>
 /// 内连接的第二阶段操作

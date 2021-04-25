@@ -6,9 +6,9 @@
 #include "ursql_io.h"
 
 size_t ii_stage_operation(name_t this_rel, name_t that_rel,
-                          property_info_t this_main_key, property_info_t that_main_key,
-                          alg_stage_ii stage_ii,
-                          buffer_t buf)
+	property_info_t this_main_key, property_info_t that_main_key,
+	alg_stage_ii stage_ii, address_t ans_base_addr,
+	buffer_t buf)
 {
 	printf("阶段I分组排序...\n");
 	block_sort(this_rel, this_main_key.property_name, buf);
@@ -20,7 +20,7 @@ size_t ii_stage_operation(name_t this_rel, name_t that_rel,
 	enumerator_t this_enumerators[7];
 	// 一路写入
 	data_writer_origin_t writer_base;
-	data_writer_t writer = create_data_writer(&writer_base, URSQL_INNER_JOIN_BASE, buf);
+	data_writer_t writer = create_data_writer(&writer_base, ans_base_addr, buf);
 	//打开输入流
 	size_t this_input_count = 0;
 	size_t block_sum_count = length_of(this_rel);
@@ -142,5 +142,105 @@ min(this_main_key.property_range.right,that_main_key.property_range.right) };
 		move_next_polymeric(this_reader);
 	}
 
+	return ans_count;
+}
+
+item_t* step(polymeric_enumerator_t reader)
+{
+
+	if (has_next_polymeric(reader))
+	{
+		move_next_polymeric(reader);
+		return value_of_polymeric(reader);
+	}
+	return NULL;
+}
+
+size_t union_stage_ii(data_writer_t writer, polymeric_enumerator_t this_reader, polymeric_enumerator_t that_reader,
+	property_info_t this_main_key, property_info_t that_main_key, buffer_t buf)
+{
+	size_t ans_count = 0;
+	item_t* left_val = value_of_polymeric(this_reader);
+	item_t* right_val = value_of_polymeric(that_reader);
+	for (; left_val || right_val; ans_count++)
+	{
+		//如果左边空, 或左边大，则右边前进
+		if (!left_val ||
+			(right_val && compare_items(left_val, right_val, this_main_key.property_name) > 0))
+		{
+			append_data(writer, *right_val);
+			right_val = step(that_reader);
+			continue;
+		}
+		//如果右边空，或右边大，则左边前进
+		if (!right_val || compare_items(left_val, right_val, this_main_key.property_name) < 0)
+		{
+			append_data(writer, *left_val);
+			left_val = step(this_reader);
+			continue;
+		}
+		//两边等值，同时前进
+		append_data(writer, *left_val);
+		left_val = step(this_reader);
+		right_val = step(that_reader);
+	}
+	return ans_count;
+}
+
+size_t intersect_stage_ii(data_writer_t writer, polymeric_enumerator_t this_reader, polymeric_enumerator_t that_reader,
+	property_info_t this_main_key, property_info_t that_main_key, buffer_t buf)
+{
+	size_t ans_count = 0;
+	item_t* left_val = value_of_polymeric(this_reader);
+	item_t* right_val = value_of_polymeric(that_reader);
+	for (; left_val && right_val; )
+	{
+		//或左边大，则右边前进
+		if (compare_items(left_val, right_val, this_main_key.property_name) > 0)
+		{
+			right_val = step(that_reader);
+			continue;
+		}
+		//或右边大，则左边前进
+		if (compare_items(left_val, right_val, this_main_key.property_name) < 0)
+		{
+			left_val = step(this_reader);
+			continue;
+		}
+		//两边等值，同时前进
+		append_data(writer, *left_val);
+		left_val = step(this_reader);
+		right_val = step(that_reader);
+		ans_count++;
+	}
+	return ans_count;
+}
+
+size_t subtract_stage_ii(data_writer_t writer, polymeric_enumerator_t this_reader, polymeric_enumerator_t that_reader,
+	property_info_t this_main_key, property_info_t that_main_key, buffer_t buf)
+{
+	size_t ans_count = 0;
+	item_t* left_val = value_of_polymeric(this_reader);
+	item_t* right_val = value_of_polymeric(that_reader);
+	for (; left_val; )
+	{
+		//如果左边空, 或左边大，则右边前进
+		if (right_val && compare_items(left_val, right_val, this_main_key.property_name) > 0)
+		{
+			right_val = step(that_reader);
+			continue;
+		}
+		//如果右边空，或右边大，则左边前进
+		if (!right_val || compare_items(left_val, right_val, this_main_key.property_name) < 0)
+		{
+			append_data(writer, *left_val);
+			left_val = step(this_reader);
+			ans_count++;
+			continue;
+		}
+		//两边等值，同时前进
+		left_val = step(this_reader);
+		right_val = step(that_reader);
+	}
 	return ans_count;
 }

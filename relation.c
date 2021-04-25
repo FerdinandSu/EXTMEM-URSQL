@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+
+#include "block.h"
 #include "data_writer.h"
 #include "enumerator.h"
 #include "ii_stage_opration.h"
@@ -37,7 +39,7 @@ void linear_search(const name_t rel, const name_t key, const data_t value, buffe
 		block_t* origin = load_block(next, buf);
 		for (size_t i = 0; i < 7; i++)
 		{
-			const item_t current_item = origin->items[i];
+			item_t current_item = origin->items[i];
 			if (key_of(&current_item, key) == value)
 			{
 				printf("(%d,%d)\n", current_item.first, current_item.second);
@@ -154,7 +156,8 @@ void inner_join(name_t this_rel, name_t target_rel, property_info_t inner_key, p
 	printf(LONG_LINE);
 
 	size_t ans_count = ii_stage_operation(this_rel, target_rel,
-		inner_key, outer_key, inner_join_stage_ii, buf);
+		inner_key, outer_key, inner_join_stage_ii, 
+		URSQL_INNER_JOIN_BASE ,buf);
 
 	printf(CWL_RED"总共连接%llu次。\n"CWL_NONE, ans_count);
 	printf("\n");
@@ -165,11 +168,12 @@ void inner_join(name_t this_rel, name_t target_rel, property_info_t inner_key, p
 void union_sets(name_t this_rel, name_t target_rel, property_info_t inner_key, property_info_t outer_key, buffer_t buf)
 {
 	printf(LONG_LINE);
-	printf(CWL_RED"基于排序的并集操作"CWL_NONE);
+	printf(CWL_RED"基于排序的并集操作\n"CWL_NONE);
 	printf(LONG_LINE);
 
 	size_t ans_count = ii_stage_operation(this_rel, target_rel,
-		inner_key, outer_key, union_stage_ii, buf);
+		inner_key, outer_key, union_stage_ii, 
+		URSQL_UNION_BASE,buf);
 
 	printf(CWL_RED"共计元素%llu个。\n"CWL_NONE, ans_count);
 	printf("\n");
@@ -181,11 +185,12 @@ void intersect_sets(name_t this_rel, name_t target_rel, property_info_t inner_ke
 	buffer_t buf)
 {
 	printf(LONG_LINE);
-	printf(CWL_RED"基于排序的交集操作"CWL_NONE);
+	printf(CWL_RED"基于排序的交集操作\n"CWL_NONE);
 	printf(LONG_LINE);
 
 	size_t ans_count = ii_stage_operation(this_rel, target_rel,
-		inner_key, outer_key, intersect_stage_ii, buf);
+		inner_key, outer_key, intersect_stage_ii,
+		URSQL_INTERSECT_BASE,buf);
 
 	printf(CWL_RED"共计元素%llu个。\n"CWL_NONE, ans_count);
 	printf("\n");
@@ -197,11 +202,12 @@ void subtract_sets(name_t this_rel, name_t target_rel, property_info_t inner_key
 	buffer_t buf)
 {
 	printf(LONG_LINE);
-	printf(CWL_RED"基于排序的差集操作"CWL_NONE);
+	printf(CWL_RED"基于排序的差集操作\n"CWL_NONE);
 	printf(LONG_LINE);
 
 	size_t ans_count = ii_stage_operation(this_rel, target_rel,
-		inner_key, outer_key, subtract_stage_ii, buf);
+		inner_key, outer_key, subtract_stage_ii,
+		URSQL_SUBTRACT_BASE, buf);
 
 	printf(CWL_RED"共计元素%llu个。\n"CWL_NONE, ans_count);
 	printf("\n");
