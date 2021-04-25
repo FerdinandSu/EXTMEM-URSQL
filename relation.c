@@ -95,6 +95,10 @@ void block_sort(name_t rel, name_t key, buffer_t buf)
 
 void tpmms(name_t rel, name_t key, buffer_t buf)
 {
+	printf(LONG_LINE);
+	printf(CWL_RED"ORDER BY %c.%c:\n"CWL_NONE, rel, key);
+	printf(LONG_LINE);
+	
 	// 第一段：分别排序
 	block_sort(rel, key, buf);
 	// 第二段：多路归并
@@ -111,15 +115,52 @@ void tpmms(name_t rel, name_t key, buffer_t buf)
 		const size_t load_size = min(block_sum_count, 8);
 		block_sum_count -= load_size;
 		enumerators[input_count++]
-			= create_enumerator(URSQL_BLOCK_SORTED_BASE+base_address, buf);
+			= create_enumerator(URSQL_BLOCK_SORTED_BASE + base_address, buf);
 		base_address += load_size;
 	}
 	// 排序
 	while (input_count)
 	{
-
+		data_t min_val = ~0u;
+		size_t min_i = 7;
+		for (size_t i = 0; i < input_count; i++)
+		{
+			const data_t this_key = key_of_pointer(value_of(enumerators[i]), key);
+			if (this_key < min_val)
+			{
+				min_val = this_key;
+				min_i = i;
+			}
+		}
+		if(min_i==7)
+		{
+			printf("Sort Failed.");
+			return;
+		}
+		// 最小值写入磁盘
+		append_data(writer, *value_of(enumerators[min_i]));
+		// 更新迭代器
+		if(has_next(enumerators[min_i]))
+		{
+			move_next(enumerators[min_i]);
+		}
+		else
+		{
+			// 从队列移除没有元素的迭代器
+			destroy_enumerator(enumerators[min_i]);
+			if(min_i+1!= input_count)
+			{
+				enumerators[min_i] = enumerators[input_count - 1];
+			}
+			input_count--;
+			
+		}
 	}
-	//关闭流
+	comment_wrote_into_blocks(writer->initial_block, writer->current_block);
+	printf("\n");
+	comment_io_times(buf);
+	
+	// 关闭流
 	close_data_writer(writer);
 	for (size_t i = 0; i < input_count; i++)
 	{

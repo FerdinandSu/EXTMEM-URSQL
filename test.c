@@ -15,9 +15,12 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
-	/* Get a new block in the buffer */
-	linear_search('S', 'C', 50, &buf);
-
+	buffer_t buffer = &buf;
+	
+	// ÏßÐÔ¼ìË÷
+	//linear_search('S', 'C', 50, &buf);
+	//TPMMS
+	tpmms('S', 'C', buffer);
 	
 	return 0;
 }

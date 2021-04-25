@@ -33,14 +33,15 @@ bool save_data(void* addr, data_t data)
 		*d = (char)('0' + data % 10);
 		data /= 10;
 	}
-
-	for (size_t i = 0, j = 0; i < 4; i++)
+	size_t j = 0;
+	for (;buf[j] == '0' && j < 4;)
 	{
-		while (buf[j] == '0' && j < 4)
-		{
-			j++;
-		}
-		exp[j] = (char)(j >= 4 ? 0 : buf[j]);
+		j++;
+	}
+	for (size_t i = 0; i < 4; i++)
+	{
+
+		exp[i] = (char)(j >= 4 ? 0 : buf[j++]);
 
 	}
 	return true;
@@ -72,13 +73,14 @@ data_t load_data(void* addr)
 block_t* load_block(const address_t address, const buffer_t buffer)
 {
 	block_t* block = (block_t*)readBlockFromDisk(address, buffer);
+	printf("读入数据块%lld\n", address);
 	for (size_t i = 0; i < 7; i++)
 	{
 		block->items[i].first = load_data(&block->items[i].first);
 		block->items[i].second = load_data(&block->items[i].second);
 	}
 	block->next = load_data(&block->next);
-	printf("读入数据块%lld\n", address);
+
 	return block;
 }
 
@@ -123,7 +125,9 @@ inline item_t* item_at(size_t index, block_t** blocks)
 
 void sort_blocks(size_t count, name_t key, block_t** blocks)
 {
+	//让count对准最后一个元素
 	count *= 7;
+	count--;
 	/* Note: in assertions below, i and j are alway inside original bound of array to sort. */
 	while (count > 0)
 	{

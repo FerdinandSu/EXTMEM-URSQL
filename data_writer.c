@@ -6,7 +6,7 @@ data_writer_t create_data_writer(address_t first_block, buffer_t buffer)
 {
 	data_writer_t const r = (data_writer_t)calloc(1, sizeof(data_writer_origin_t));
 	r->buffer = buffer;
-	r->block = load_block(first_block, buffer);
+	r->block = create_block(buffer);
 	r->current_block = first_block;
 	r->initial_block = first_block;
 	return r;

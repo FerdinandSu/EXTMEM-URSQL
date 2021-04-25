@@ -35,6 +35,13 @@ void free_block(block_t* block,buffer_t buffer);
 /// <param name="key">键</param>
 /// <returns>值</returns>
  data_t key_of(item_t item, name_t key);
+ /// <summary>
+ /// 获取指定键上的值
+ /// </summary>
+ /// <param name="item">项目</param>
+ /// <param name="key">键</param>
+ /// <returns>值</returns>
+ data_t key_of_pointer(item_t* item, name_t key);
 /// <summary>
 /// 对指定的块进行升序排序.
 /// </summary>
