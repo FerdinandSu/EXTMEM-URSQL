@@ -55,3 +55,4 @@ typedef struct block_t_str
 #define URSQL_INDEX_SEARCH_BASE (address_t)5e2
 
 #define URSQL_INNER_JOIN_BASE (address_t)6e2
+#define URSQL_INNER_JOIN_BUFFER_BASE (address_t)7e2

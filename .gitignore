@@ -12,6 +12,7 @@ appsettings.Development.json
 *.userosscache
 *.sln.docstates
 data/
+.VSCodeCounter/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

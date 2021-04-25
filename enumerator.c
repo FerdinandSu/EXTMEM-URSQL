@@ -44,3 +44,13 @@ void destroy_enumerator(enumerator_t this)
 {
 	free_block(this->block, this->buffer);
 }
+
+void suspend_enumerator(enumerator_t this)
+{
+	free_block(this->block, this->buffer);
+}
+
+void restart_enumerator(enumerator_t this)
+{
+	this->block = load_block(this->current_address, this->buffer);
+}

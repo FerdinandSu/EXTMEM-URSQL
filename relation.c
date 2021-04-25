@@ -126,11 +126,12 @@ void tpmms(name_t rel, name_t key, buffer_t buf)
 	polymeric_enumerator_origin_t reader_base = { enumerators,input_count,min_of_enumerators,key,~0u };
 	polymeric_enumerator_t reader = initialize_polymeric_enumerator(&reader_base);
 	// 使用聚合枚举器排序
-	do
+	for (;;)
 	{
 		append_data(writer, *value_of_polymeric(reader));
+		if (!has_next_polymeric(reader))break;
 		move_next_polymeric(reader);
-	} while (has_next_polymeric(reader));
+	}
 	destroy_polymeric_enumerator(reader);
 	comment_wrote_into_blocks(writer->initial_block, writer->current_block);
 	// 关闭流
@@ -153,8 +154,7 @@ void create_index(name_t rel, property_info_t key, buffer_t buf)
 	enumerator_t origin = initialize_enumerator(&origin_base, address_of(rel) + URSQL_ALL_SORTED_BASE, buf);
 
 	data_t last = ~0u;
-
-	do
+	for (;;)
 	{
 		data_t const value = key_of_pointer(value_of(origin), key.property_name);
 		if (last != value)
@@ -163,8 +163,10 @@ void create_index(name_t rel, property_info_t key, buffer_t buf)
 			append_data(writer, data);
 			last = value;
 		}
+		if (!has_next(origin))break;
 		move_next(origin);
-	} while (has_next(origin));
+	}
+
 
 	destroy_enumerator(origin);
 	comment_wrote_into_blocks(writer->initial_block, writer->current_block);
@@ -182,10 +184,10 @@ void inner_join(name_t this_rel, name_t target_rel, property_info_t inner_key, p
 	printf(CWL_RED"基于排序的连接操作算法\n INNER JOIN %c\n ON%c.%c=%c.%c:\n"CWL_NONE,
 		target_rel, this_rel, inner_key.property_name, target_rel, outer_key.property_name);
 	printf(LONG_LINE);
-	printf("分组排序...");
+	printf("分组排序...\n");
 	block_sort(this_rel, inner_key.property_name, buf);
 	block_sort(target_rel, outer_key.property_name, buf);
-	printf("连接...");
+	printf("连接...\n");
 
 	// (至多)七路读取
 	enumerator_origin_t enumerator_bases[7];
@@ -222,21 +224,93 @@ void inner_join(name_t this_rel, name_t target_rel, property_info_t inner_key, p
 		base_address += load_size;
 	}
 	// 连接
-	while (that_input_count > 0 && that_input_count > 0)
+	polymeric_enumerator_origin_t
+		this_reader_base = { this_enumerators,this_input_count,min_of_enumerators,inner_key.property_name,~0u },
+		that_reader_base = { that_enumerators,that_input_count,min_of_enumerators,outer_key.property_name,~0u };
+	polymeric_enumerator_t
+		this_reader = initialize_polymeric_enumerator(&this_reader_base),
+		that_reader = initialize_polymeric_enumerator(&that_reader_base);
+
+	range_t ok_range = { max(inner_key.property_range.left,outer_key.property_range.left),
+	min(inner_key.property_range.right,outer_key.property_range.right) };
+
+	size_t ans_count = 0;
+	
+	data_t last_this_key = ~0u;
+	bool have_any = false;
+	for (;;)
 	{
-		for (size_t i = 0; i < this_input_count; i++)
+		item_t* this_value = value_of_polymeric(this_reader);
+		data_t const this_key = key_of_pointer(this_value, inner_key.property_name);
+		if (this_key > ok_range.right) break;
+		if (this_key >= ok_range.left)
 		{
-			/*if (key_of_pointer(value_of(this_enumerators[i]), inner_key.property_name)
-				< outer_key.property_range.left)
+			if (last_this_key != this_key)
 			{
-				if (has_next(this_enumerators[i]))
-			}*/
+				//开始缓存
+				have_any = false;
+				//挂起一个内关系的枚举器，以便转录
+				suspend_enumerator(this_enumerators[0]);
+				//转录写入器
+				data_writer_origin_t buffer_writer_base;
+				data_writer_t buffer_writer = create_data_writer(&buffer_writer_base, URSQL_INNER_JOIN_BUFFER_BASE, buf);
+				for (;;)
+				{
+					item_t* that_value = value_of_polymeric(that_reader);
+					data_t const that_key = key_of_pointer(that_value, outer_key.property_name);
+					if (that_key > this_key) break;
+					if (that_key == this_key) {
+						have_any = true;
+						append_data(buffer_writer, *that_value);
+					}
+					if (!has_next_polymeric(that_reader))break;
+					move_next_polymeric(that_reader);
+				}
+				close_data_writer(buffer_writer);
+				//挂起重启内关系的枚举器
+				restart_enumerator(this_enumerators[0]);
+				last_this_key = this_key;
+			}
+			// 导入缓存
+			if (have_any)
+			{
+				//挂起一个外关系的枚举器，以便转录
+				suspend_enumerator(that_enumerators[0]);
+				//转录写入器
+				enumerator_origin_t buffer_reader_base;
+				enumerator_t buffer_reader = initialize_enumerator(&buffer_reader_base, URSQL_INNER_JOIN_BUFFER_BASE, buf);
+				for (;;)
+				{
+					item_t* that_value = value_of(buffer_reader);
+					data_t const that_key = key_of_pointer(that_value, outer_key.property_name);
+					if (that_key != this_key) break;
+					if (that_key == this_key) {
+						ans_count++;
+						append_data(writer, *this_value);
+						append_data(writer, *that_value);
+					}
+					if (!has_next(buffer_reader))break;
+					move_next(buffer_reader);
+				}
+				destroy_enumerator(buffer_reader);
+				//重启外关系的枚举器
+				restart_enumerator(that_enumerators[0]);
+				last_this_key = this_key;
+
+			}
 		}
+		if (!has_next_polymeric(this_reader))break;
+		move_next_polymeric(this_reader);
 	}
+
 
 	comment_wrote_into_blocks(writer->initial_block, writer->current_block);
 	// 关闭流
 	close_data_writer(writer);
+	destroy_polymeric_enumerator(this_reader);
+	destroy_polymeric_enumerator(that_reader);
+	printf("\n");
+	printf(CWL_RED"总共连接%llu次。\n"CWL_NONE, ans_count);
 	printf("\n");
 	comment_io_times(buf);
 	buf->numIO = 0;
@@ -257,7 +331,7 @@ void indexed_search(name_t rel, property_info_t key, const data_t value, buffer_
 	enumerator_t origin = initialize_enumerator(&origin_base, data_addr, buf);
 	data_writer_origin_t writer_base;
 	data_writer_t writer = create_data_writer(&writer_base, address_of(rel) + URSQL_INDEX_SEARCH_BASE, buf);
-	do
+	for (;;)
 	{
 		item_t* const current_item = value_of(origin);
 		data_t const current_value = key_of_pointer(current_item, key.property_name);
@@ -272,8 +346,9 @@ void indexed_search(name_t rel, property_info_t key, const data_t value, buffer_
 		{
 			break;
 		}
+		if (!has_next(origin))break;
 		move_next(origin);
-	} while (has_next(origin));
+	}
 	comment_wrote_into_blocks(writer->initial_block, writer->current_block);
 	// 关闭流
 	close_data_writer(writer);

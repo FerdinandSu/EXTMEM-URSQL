@@ -15,3 +15,8 @@ void comment_io_times(buffer_t buffer)
 	printf(CWL_RED"IO¶ÁÐ´Ò»¹²%lu´Î", buffer->numIO);
 	printf(CWL_NONE"¡£\n");
 }
+
+void comment_item(item_t item)
+{
+	printf("(%d,%d)\n", item.first, item.second);
+}

@@ -11,69 +11,69 @@ typedef struct relation_t_str
 
 
 /// <summary>
-/// »ñÈ¡Ö¸¶¨¹ØÏµµÄµØÖ·
+/// è·å–æŒ‡å®šå…³ç³»çš„åœ°å€
 /// </summary>
-/// <param name="relation">¹ØÏµÃû³Æ</param>
-/// <returns>µØÖ·</returns>
+/// <param name="relation">å…³ç³»åç§°</param>
+/// <returns>åœ°å€</returns>
 address_t address_of(name_t relation);
 
 /// <summary>
-/// »ñÈ¡Ö¸¶¨¹ØÏµµÄ´óĞ¡
+/// è·å–æŒ‡å®šå…³ç³»çš„å¤§å°
 /// </summary>
-/// <param name="relation">¹ØÏµÃû³Æ</param>
-/// <returns>µØÖ·</returns>
+/// <param name="relation">å…³ç³»åç§°</param>
+/// <returns>åœ°å€</returns>
 size_t length_of(name_t relation);
 
 /// <summary>
-/// ¶ÔÒ»¸ö¹ØÏµµÄÃ¿Ò»¸ö´¢´æ¿éÅÅĞò
+/// å¯¹ä¸€ä¸ªå…³ç³»çš„æ¯ä¸€ä¸ªå‚¨å­˜å—æ’åº
 /// </summary>
-/// <param name="rel">¹ØÏµĞÅÏ¢</param>
-/// <param name="key">ÅÅĞòËùÓÃµÄ¼ü</param>
+/// <param name="rel">å…³ç³»ä¿¡æ¯</param>
+/// <param name="key">æ’åºæ‰€ç”¨çš„é”®</param>
 /// <param name="buf"></param>
 void sort_each_block(name_t rel, name_t key, buffer_t buf);
 /// <summary>
-/// ÏßĞÔ¼ìË÷¹ØÏµ£¬ÕÒµ½Âú×ãÌõ¼şµÄÌõÄ¿ÃÇ
+/// çº¿æ€§æ£€ç´¢å…³ç³»ï¼Œæ‰¾åˆ°æ»¡è¶³æ¡ä»¶çš„æ¡ç›®ä»¬
 /// </summary>
-/// <param name="rel">Òª¼ìË÷µÄ¹ØÏµ</param>
-/// <param name="key">¼ìË÷µÄ¼ü</param>
-/// <param name="value">Öµ</param>
-/// <param name="buf">»º³åÇø</param>
+/// <param name="rel">è¦æ£€ç´¢çš„å…³ç³»</param>
+/// <param name="key">æ£€ç´¢çš„é”®</param>
+/// <param name="value">å€¼</param>
+/// <param name="buf">ç¼“å†²åŒº</param>
 void linear_search(name_t rel, name_t key, data_t value, buffer_t buf);
 /// <summary>
-/// ÓÃË÷Òı¼ìË÷¹ØÏµ£¬ÕÒµ½Âú×ãÌõ¼şµÄÌõÄ¿ÃÇ
+/// ç”¨ç´¢å¼•æ£€ç´¢å…³ç³»ï¼Œæ‰¾åˆ°æ»¡è¶³æ¡ä»¶çš„æ¡ç›®ä»¬
 /// </summary>
-/// <param name="rel">Òª¼ìË÷µÄ¹ØÏµ</param>
-/// <param name="key">¼ìË÷µÄ¼ü</param>
-/// <param name="value">Öµ</param>
-/// <param name="buf">»º³åÇø</param>
+/// <param name="rel">è¦æ£€ç´¢çš„å…³ç³»</param>
+/// <param name="key">æ£€ç´¢çš„é”®</param>
+/// <param name="value">å€¼</param>
+/// <param name="buf">ç¼“å†²åŒº</param>
 void indexed_search(name_t rel, property_info_t key, data_t value, buffer_t buf);
 /// <summary>
-/// ¶ÔÖ¸¶¨¹ØÏµTPMMS
+/// å¯¹æŒ‡å®šå…³ç³»TPMMS
 /// </summary>
-/// <param name="rel">¹ØÏµ</param>
-/// <param name="key">¼ü</param>
-/// <param name="buf">»º³åÇø</param>
+/// <param name="rel">å…³ç³»</param>
+/// <param name="key">é”®</param>
+/// <param name="buf">ç¼“å†²åŒº</param>
 void tpmms(name_t rel, name_t key, buffer_t buf);
 /// <summary>
-/// ¶ÔÖ¸¶¨¹ØÏµ·Ö¿éÅÅĞò
+/// å¯¹æŒ‡å®šå…³ç³»åˆ†å—æ’åº
 /// </summary>
-/// <param name="rel">¹ØÏµ</param>
-/// <param name="key">¼ü</param>
-/// <param name="buf">»º³åÇø</param>
+/// <param name="rel">å…³ç³»</param>
+/// <param name="key">é”®</param>
+/// <param name="buf">ç¼“å†²åŒº</param>
 void block_sort(name_t rel, name_t key, buffer_t buf);
 /// <summary>
-/// ¸ù¾İÅÅĞò½á¹û´´½¨Ë÷Òı¡£´´½¨Ë÷ÒıµÄ¸´ÔÓ¶ÈÊÇO(n)µÄ£¬µ«ÊÇÀíÂÛÉÏ¿ÉÒÔÄÚÁªÓÚÅÅĞò¡£
+/// æ ¹æ®æ’åºç»“æœåˆ›å»ºç´¢å¼•ã€‚åˆ›å»ºç´¢å¼•çš„å¤æ‚åº¦æ˜¯O(n)çš„ï¼Œä½†æ˜¯ç†è®ºä¸Šå¯ä»¥å†…è”äºæ’åºã€‚
 /// </summary>
-/// <param name="rel">¹ØÏµ</param>
-/// <param name="key">¼ü</param>
-/// <param name="buf">»º³åÇø</param>
+/// <param name="rel">å…³ç³»</param>
+/// <param name="key">é”®</param>
+/// <param name="buf">ç¼“å†²åŒº</param>
 void create_index(name_t rel, property_info_t key, buffer_t buf);
 /// <summary>
-/// ÄÚÁ¬½ÓÁ½¸ö¹ØÏµ
+/// å†…è¿æ¥ä¸¤ä¸ªå…³ç³»
 /// </summary>
-/// <param name="this_rel">Ö÷¹ØÏµ</param>
-/// <param name="target_rel">±»½ÓÈëµÄ¹ØÏµ</param>
-/// <param name="inner_key">ÄÚ¼ü</param>
-/// <param name="outer_key">Íâ¼ü</param>
-/// <param name="buf">»º³åÇø</param>
+/// <param name="this_rel">ä¸»å…³ç³»</param>
+/// <param name="target_rel">è¢«æ¥å…¥çš„å…³ç³»</param>
+/// <param name="inner_key">å†…é”®</param>
+/// <param name="outer_key">å¤–é”®</param>
+/// <param name="buf">ç¼“å†²åŒº</param>
 void inner_join(name_t this_rel, name_t target_rel, property_info_t inner_key, property_info_t outer_key, buffer_t buf);

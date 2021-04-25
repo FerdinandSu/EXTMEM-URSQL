@@ -54,3 +54,13 @@ item_t* value_of(enumerator_t this);
 /// </summary>
 /// <param name="this">当前枚举器</param>
 void destroy_enumerator(enumerator_t this);
+/// <summary>
+/// 挂起当前枚举器，释放内存占用
+/// </summary>
+/// <param name="this">当前枚举器</param>
+void suspend_enumerator(enumerator_t this);
+/// <summary>
+/// 解除挂起当前枚举器
+/// </summary>
+/// <param name="this">当前枚举器</param>
+void restart_enumerator(enumerator_t this);

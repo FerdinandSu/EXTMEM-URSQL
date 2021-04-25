@@ -2,14 +2,20 @@
 #include "ursql-consts.h"
 
 /// <summary>
-/// Êä³ö´ÅÅÌ¿éĞ´ÈëËµÃ÷
+/// è¾“å‡ºç£ç›˜å—å†™å…¥è¯´æ˜
 /// </summary>
-/// <param name="left">µÚÒ»¿é</param>
-/// <param name="right">×îºóÒ»¿é</param>
+/// <param name="left">ç¬¬ä¸€å—</param>
+/// <param name="right">æœ€åä¸€å—</param>
 void comment_wrote_into_blocks(address_t left, address_t right);
 
 /// <summary>
-/// Êä³ö¶ÁĞ´´ÎÊı
+/// è¾“å‡ºè¯»å†™æ¬¡æ•°
 /// </summary>
-/// <param name="buffer">»º³åÇø</param>
+/// <param name="buffer">ç¼“å†²åŒº</param>
 void comment_io_times(buffer_t buffer);
+
+/// <summary>
+/// è¾“å‡ºä¸€ä¸ªé¡¹ç›®
+/// </summary>
+/// <param name="item">è¦è¾“å‡ºçš„é¡¹ç›®</param>
+void comment_item(item_t item);
