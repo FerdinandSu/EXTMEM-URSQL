@@ -1,4 +1,15 @@
+/**
+ * enumerator.h
+ * Ferdinand Sukhoi
+ * Harbin Institute of Technology
+ * April 25, 2021
+ *
+ * 基础设施
+ */
+
 #pragma once
+#include <stdbool.h>
+
 //颜色宏定义
 #define CWL_NONE         "\033[m"
 #define CWL_RED          "\033[0;32;31m"

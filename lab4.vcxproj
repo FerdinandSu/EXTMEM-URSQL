@@ -145,10 +145,12 @@
     <ClCompile Include="data_writer.c" />
     <ClCompile Include="enumerator.c" />
     <ClCompile Include="extmem.c" />
+    <ClCompile Include="ii_stage_opration.c" />
     <ClCompile Include="infrastructure.c" />
     <ClCompile Include="polymeric_enumerator.c" />
     <ClCompile Include="relation.c" />
     <ClCompile Include="test.c" />
+    <ClCompile Include="ursql-consts.c" />
     <ClCompile Include="ursql_io.c" />
   </ItemGroup>
   <ItemGroup>
@@ -156,6 +158,7 @@
     <ClInclude Include="data_writer.h" />
     <ClInclude Include="enumerator.h" />
     <ClInclude Include="extmem.h" />
+    <ClInclude Include="ii_stage_opration.h" />
     <ClInclude Include="infrastructure.h" />
     <ClInclude Include="polymeric_enumerator.h" />
     <ClInclude Include="relation.h" />

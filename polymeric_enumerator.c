@@ -71,14 +71,14 @@ size_t min_of_enumerators(size_t count, enumerator_t* array, name_t key)
 {
 	if (count == 0)return ~0u;
 	if (count == 1)return 0;
-	data_t min_val = ~0u;
+	item_t min_val = { ~0u ,~0u};
 	size_t min_i = ~0u;
 	for (size_t i = 0; i < count; i++)
 	{
-		const data_t this_key = key_of_pointer(value_of(array[i]), key);
-		if (this_key < min_val)
+		item_t* const this_val = value_of(array[i]);
+		if (compare_items(this_val,&min_val,key)<0)
 		{
-			min_val = this_key;
+			min_val = *this_val;
 			min_i = i;
 		}
 	}

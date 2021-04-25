@@ -7,6 +7,8 @@
  * 用于适配EXTMEM的块操作中间件
  */
 #pragma once
+
+
 #include "ursql-consts.h"
 
 /// <summary>
@@ -36,20 +38,7 @@ void free_block(block_t* block,buffer_t buffer);
 /// <param name="buffer">缓冲区</param>
 /// <returns>块指针</returns>
  block_t* load_block(address_t address, buffer_t buffer);
-/// <summary>
-/// 获取指定键上的值
-/// </summary>
-/// <param name="item">项目</param>
-/// <param name="key">键</param>
-/// <returns>值</returns>
- data_t key_of(item_t item, name_t key);
- /// <summary>
- /// 获取指定键上的值
- /// </summary>
- /// <param name="item">项目</param>
- /// <param name="key">键</param>
- /// <returns>值</returns>
- data_t key_of_pointer(item_t* item, name_t key);
+
 /// <summary>
 /// 对指定的块进行升序排序.
 /// </summary>
@@ -64,3 +53,10 @@ void sort_block(block_t* block, name_t key);
 /// <param name="key">键</param>
 /// <param name="blocks">块数组</param>
 void sort_blocks(size_t count, name_t key, block_t** blocks);
+/// <summary>
+/// 对指定关系分块排序
+/// </summary>
+/// <param name="rel">关系</param>
+/// <param name="key">键</param>
+/// <param name="buf">缓冲区</param>
+void block_sort(name_t rel, name_t key, buffer_t buf);

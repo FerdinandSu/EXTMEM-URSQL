@@ -1,3 +1,12 @@
+/**
+ * enumerator.h
+ * Ferdinand Sukhoi
+ * Harbin Institute of Technology
+ * April 25, 2021
+ *
+ * 通用输入输出操作
+ */
+
 #pragma once
 #include "ursql-consts.h"
 

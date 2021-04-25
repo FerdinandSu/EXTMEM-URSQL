@@ -86,17 +86,7 @@ block_t* load_block(const address_t address, const buffer_t buffer)
 	return block;
 }
 
-data_t key_of(item_t item, name_t key)
-{
-	// A(65),C(67)则使用第一项
-	return key & 1 ? item.first : item.second;
-}
 
-data_t key_of_pointer(item_t* item, name_t key)
-{
-	// A(65),C(67)则使用第一项
-	return key & 1 ? item->first : item->second;
-}
 static void swap_items(item_t* a, item_t* b) {
 	if (a == b)return;
 	uint64_t* au = (uint64_t*)a;
@@ -115,7 +105,7 @@ void sort_block(block_t* block, name_t key)
 	{
 		item_t* max = start;
 		for (item_t* p = start + 1; p <= end; p++)
-			if (key_of(*p, key) > key_of(*max, key))
+			if (compare_items(p, max, key) > 0)
 				max = p;
 		swap_items(max, end);
 		end--;
@@ -138,9 +128,36 @@ void sort_blocks(size_t count, name_t key, block_t** blocks)
 	{
 		size_t max = 0;
 		for (size_t p = 1; p <= count; p++)
-			if (key_of_pointer(item_at(p, blocks), key) > key_of_pointer(item_at(max, blocks), key))
+			if (compare_items(item_at(p, blocks), item_at(max, blocks), key) > 0)
 				max = p;
 		swap_items(item_at(max, blocks), item_at(count, blocks));
 		count--;
+	}
+}
+
+
+void block_sort(name_t rel, name_t key, buffer_t buf)
+{
+	size_t block_sum_count = length_of(rel);
+	address_t base_address = address_of(rel);
+	block_t* blocks[8];
+	while (block_sum_count)
+	{
+		const size_t load_size = min(block_sum_count, 8);
+		block_sum_count -= load_size;
+		//读入数据
+		for (size_t i = 0; i < load_size; i++)
+		{
+			blocks[i] = load_block(base_address + i, buf);
+		}
+		//内排序
+		sort_blocks(load_size, key, blocks);
+		//导出数据
+		for (size_t i = 0; i < load_size; i++)
+		{
+			blocks[i]->next = i + 1 == load_size ? 0 : URSQL_BLOCK_SORTED_BASE + base_address + i + 1;
+			save_block(blocks[i], URSQL_BLOCK_SORTED_BASE + base_address + i, buf);
+		}
+		base_address += load_size;
 	}
 }
