@@ -25,10 +25,10 @@ int main(int argc, char** argv)
 	
 
 	// 线性检索
-	//linear_search('S', 'C', 50, &buf);
+	linear_search('S', 'C', 50, &buf);
 	//TPMMS
-	//tpmms('R', 'A', buffer);
-	//tpmms('S', 'C', buffer);
+	tpmms('R', 'A', buffer);
+	tpmms('S', 'C', buffer);
 
 	// 创建索引
 
@@ -36,10 +36,10 @@ int main(int argc, char** argv)
 	//create_index('S', s_c, buffer);
 
 	// 索引检索
-	//indexed_search('S', s_c, 50, buffer);
+	indexed_search('S', s_c, 50, buffer);
 
 	inner_join('R', 'S', r_a, s_c, buffer);
-
+	//集合操作
 	union_sets('R', 'S', r_a, s_c, buffer);
 
 	intersect_sets('R', 'S', r_a, s_c, buffer);
