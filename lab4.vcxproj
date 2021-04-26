@@ -149,7 +149,7 @@
     <ClCompile Include="infrastructure.c" />
     <ClCompile Include="polymeric_enumerator.c" />
     <ClCompile Include="relation.c" />
-    <ClCompile Include="test.c" />
+    <ClCompile Include="main.c" />
     <ClCompile Include="ursql-consts.c" />
     <ClCompile Include="ursql_io.c" />
   </ItemGroup>

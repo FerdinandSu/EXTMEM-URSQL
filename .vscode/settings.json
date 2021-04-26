@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "infrastructure.h": "c",
+        "ursql_io.h": "c"
+    }
+}
